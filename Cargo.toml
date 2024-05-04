@@ -1,5 +1,3 @@
-workspace = { members = ["examples/basic"] }
-
 [package]
 name = "egui-tabs"
 version = "0.1.0"
@@ -10,7 +8,10 @@ edition = "2021"
 [dependencies]
 egui = { path = "/home/jb55/dev/github/emilk/egui/crates/egui" }
 egui_extras = { path = "/home/jb55/dev/github/emilk/egui/crates/egui_extras" }
+#egui = "0.27.2"
+#egui_extras = "0.27.2"
 
 [dev-dependencies]
 eframe = { path = "/home/jb55/dev/github/emilk/egui/crates/eframe", default-features = false, features = [ "glow" ] }
+#eframe = "0.27.2"
 env_logger = "0.11.1"
