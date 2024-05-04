@@ -6,12 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-egui = { path = "/home/jb55/dev/github/emilk/egui/crates/egui" }
-egui_extras = { path = "/home/jb55/dev/github/emilk/egui/crates/egui_extras" }
-#egui = "0.27.2"
-#egui_extras = "0.27.2"
+#egui = { path = "/home/jb55/dev/github/emilk/egui/crates/egui" }
+#egui_extras = { path = "/home/jb55/dev/github/emilk/egui/crates/egui_extras" }
+egui = "*"
+egui_extras = "*"
 
 [dev-dependencies]
-eframe = { path = "/home/jb55/dev/github/emilk/egui/crates/eframe", default-features = false, features = [ "glow" ] }
-#eframe = "0.27.2"
+#eframe = { path = "/home/jb55/dev/github/emilk/egui/crates/eframe", default-features = false, features = [ "glow" ] }
+eframe = "*"
 env_logger = "0.11.1"
