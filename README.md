@@ -1,7 +1,7 @@
 
 # egui-tabs
 
-A tab container for egui
+A tab view for egui
 
 ## Usage
 
