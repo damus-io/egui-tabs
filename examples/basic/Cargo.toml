@@ -1,0 +1,17 @@
+[package]
+name = "basic"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[[bin]]
+name = "basic_example"
+path = "src/main.rs"
+
+[dependencies]
+egui-tabs = { path = "../../" }
+eframe = "0.27.2"
+egui = "0.27.2"
+env_logger = "0.11.1"

@@ -1,0 +1,6 @@
+Cargo.lock
+/target
+.build-result
+.buildcmd
+.direnv
+.envrc
