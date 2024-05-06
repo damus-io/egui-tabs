@@ -7,7 +7,7 @@ A tab view for egui
 
 warning: API in in alpha and is currently unstable 
 
-full example: [examples/basic.rs](basic)
+full example: [basic example](examples/basic.rs)
 
 ```
 Tabs::new(3).show(ui, |ui, ind| {
