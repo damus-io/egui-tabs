@@ -3,11 +3,13 @@
 
 A tab view for egui
 
+[Crappy WIP Demo](https://damus-io.github.io/egui-tabs/)
+
 ## Usage
 
 warning: API in in alpha and is currently unstable 
 
-full example: [basic example](examples/basic.rs)
+[example](examples/basic.rs)
 
 ```rust
 Tabs::new(3).show(ui, |ui, ind| {
