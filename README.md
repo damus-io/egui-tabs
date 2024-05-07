@@ -19,4 +19,4 @@ Tabs::new(3).show(ui, |ui, ind| {
         ui.label("Tab C");
     }
 });
-```
+``` 
