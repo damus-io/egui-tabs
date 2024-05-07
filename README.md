@@ -20,3 +20,4 @@ Tabs::new(3).show(ui, |ui, ind| {
     }
 });
 ```
+
