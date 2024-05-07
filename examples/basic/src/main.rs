@@ -1,5 +1,5 @@
 use eframe::egui;
-use egui::Frame;
+use egui::{Frame, Layout, Direction};
 use egui_tabs::Tabs;
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -40,13 +40,16 @@ impl eframe::App for MyApp {
         egui::CentralPanel::default()
             .frame(Frame::none())
             .show(ctx, |ui| {
+                //Tabs::new(3).layout(Layout::centered_and_justified(Direction::TopDown)).show(ui, |ui, ind| {
                 Tabs::new(3).show(ui, |ui, ind| {
                     if ind == 0 {
-                        ui.label("Tab A");
+                        ui.label("Tab A")
                     } else if ind == 1 {
-                        ui.label("Tab B");
+                        ui.label("Tab B")
                     } else if ind == 2 {
-                        ui.label("Tab C");
+                        ui.label("Tab C")
+                    } else {
+                        ui.label("Unknown")
                     }
                 });
             });

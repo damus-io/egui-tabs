@@ -47,7 +47,7 @@ impl Tabs {
 
     pub fn show<F>(&mut self, ui: &mut egui::Ui, add_tab: F)
     where
-        F: Fn(&mut egui::Ui, i32),
+        F: Fn(&mut egui::Ui, i32) -> egui::Response,
     {
         if self.cols == 0 {
             return;
@@ -59,6 +59,7 @@ impl Tabs {
         rect.set_height(self.height);
 
         let tabs_id = ui.id().with("tabs");
+        let hover_id = tabs_id.with("hover");
 
         for ind in 0..self.cols {
             let resp = ui.allocate_rect(rect, self.sense);
@@ -72,10 +73,17 @@ impl Tabs {
                 .data_mut(|d| d.get_temp::<i32>(tabs_id).unwrap_or(-1))
                 == ind;
 
+            let is_hovered = (ui
+                .ctx()
+                .data_mut(|d| d.get_temp::<i32>(hover_id).unwrap_or(-1))
+                == ind)
+                || (!is_selected && resp.hovered());
+
             if is_selected {
                 ui.painter()
                     .rect_filled(rect, 0.0, ui.visuals().selection.bg_fill);
-            } else if resp.hovered() {
+            } else if is_hovered {
+                ui.data_mut(|data| data.insert_temp(hover_id, ind));
                 ui.painter()
                     .rect_filled(rect, 0.0, ui.visuals().widgets.hovered.bg_fill);
             }
@@ -93,50 +101,14 @@ impl Tabs {
                 child_ui.style_mut().visuals.override_text_color = Some(stroke_color);
             }
 
-            add_tab(&mut child_ui, ind);
+            let resp = add_tab(&mut child_ui, ind);
+            if resp.hovered() {
+                ui.data_mut(|data| data.insert_temp(hover_id, ind));
+            }
 
             rect = rect.translate(vec2(cell_width, 0.0))
         }
     }
-
-    /*
-        pub fn _show_strip<F>(&self, ui: &mut egui::Ui, add_tab: F)
-        where
-            F: Fn(&mut egui::Ui, i32),
-        {
-            use egui_extras::{Size, StripBuilder, StripLayoutFlags};
-
-            egui::Frame::none().show(ui, |ui| {
-                ui.set_height(self.height);
-
-                StripBuilder::new(ui)
-                    .sizes(Size::remainder(), self.cols as usize)
-                    .clip(true)
-                    .sense(Sense::click())
-                    .horizontal(|mut strip| {
-                        for ind in 0..self.cols {
-                            let flags = StripLayoutFlags {
-                                hovered: ind == 1,
-                                ..StripLayoutFlags::default()
-                            };
-
-                            let (_rect, resp) = strip.cell_with_flags(flags, |ui| {
-                                add_tab(ui, ind);
-                            });
-
-                            /*
-                            let is_tab_hovered = response.as_ref().map_or(false, |r| r.hovered());
-                            if is_row_hovered {
-                                self.layout.ui.data_mut(|data| {
-                                    data.insert_temp(self.hovered_row_index_id, row_index)
-                                });
-                            }
-                            */
-                        }
-                    });
-            });
-        }
-    */
 }
 
 #[cfg(test)]
