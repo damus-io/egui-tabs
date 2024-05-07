@@ -60,6 +60,7 @@ impl Tabs {
 
         let tabs_id = ui.id().with("tabs");
         let hover_id = tabs_id.with("hover");
+        let mut any_hover = false;
 
         for ind in 0..self.cols {
             let resp = ui.allocate_rect(rect, self.sense);
@@ -107,6 +108,7 @@ impl Tabs {
             if resp.hovered() {
                 ui.ctx().set_cursor_icon(CursorIcon::PointingHand);
                 ui.data_mut(|data| data.insert_temp(hover_id, ind));
+                any_hover = true;
             }
 
             if resp.clicked() {
@@ -114,6 +116,10 @@ impl Tabs {
             }
 
             rect = rect.translate(vec2(cell_width, 0.0))
+        }
+
+        if !any_hover {
+            ui.data_mut(|data| data.remove::<i32>(hover_id));
         }
     }
 }
