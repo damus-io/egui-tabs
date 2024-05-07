@@ -1,4 +1,4 @@
-use egui::{vec2, Layout, Sense};
+use egui::{vec2, CursorIcon, Layout, Sense};
 
 pub struct Tabs {
     cols: i32,
@@ -83,6 +83,7 @@ impl Tabs {
                 ui.painter()
                     .rect_filled(rect, 0.0, ui.visuals().selection.bg_fill);
             } else if is_hovered {
+                ui.ctx().set_cursor_icon(CursorIcon::PointingHand);
                 ui.data_mut(|data| data.insert_temp(hover_id, ind));
                 ui.painter()
                     .rect_filled(rect, 0.0, ui.visuals().widgets.hovered.bg_fill);
@@ -104,6 +105,7 @@ impl Tabs {
             let resp = add_tab(&mut child_ui, ind);
 
             if resp.hovered() {
+                ui.ctx().set_cursor_icon(CursorIcon::PointingHand);
                 ui.data_mut(|data| data.insert_temp(hover_id, ind));
             }
 
