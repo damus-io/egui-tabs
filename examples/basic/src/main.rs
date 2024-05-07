@@ -40,8 +40,7 @@ impl eframe::App for MyApp {
         egui::CentralPanel::default()
             .frame(Frame::none())
             .show(ctx, |ui| {
-                //Tabs::new(3).layout(Layout::centered_and_justified(Direction::TopDown)).show(ui, |ui, ind| {
-                Tabs::new(3).show(ui, |ui, ind| {
+                Tabs::new(3).layout(Layout::centered_and_justified(Direction::TopDown)).show(ui, |ui, ind| {
                     if ind == 0 {
                         ui.label("Tab A")
                     } else if ind == 1 {

@@ -102,8 +102,13 @@ impl Tabs {
             }
 
             let resp = add_tab(&mut child_ui, ind);
+
             if resp.hovered() {
                 ui.data_mut(|data| data.insert_temp(hover_id, ind));
+            }
+
+            if resp.clicked() {
+                ui.ctx().data_mut(|d| d.insert_temp(tabs_id, ind));
             }
 
             rect = rect.translate(vec2(cell_width, 0.0))
