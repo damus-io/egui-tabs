@@ -73,9 +73,11 @@ impl Tabs {
                 == ind;
 
             if is_selected {
-                ui.painter().rect_filled(rect, 0.0, Color32::WHITE);
+                ui.painter()
+                    .rect_filled(rect, 0.0, ui.visuals().selection.bg_fill);
             } else if resp.hovered() {
-                ui.painter().rect_filled(rect, 0.0, Color32::BLUE);
+                ui.painter()
+                    .rect_filled(rect, 0.0, ui.visuals().widgets.hovered.bg_fill);
             }
 
             let mut child_ui = ui.child_ui(rect, self.layout);
