@@ -43,6 +43,3 @@ jobs:
           # this option will not maintain any history of your previous pages deployment
           # set to false if you want all page build to be committed to your gh-pages branch history
           single-commit: true
-          clean-exclude: |
-            *.wasm
-            *.js
