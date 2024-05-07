@@ -9,7 +9,7 @@ A tab view for egui
 
 warning: API in in alpha and is currently unstable 
 
-[example](examples/basic.rs)
+[example](examples/basic/src/main.rs)
 
 ```rust
 Tabs::new(3).show(ui, |ui, ind| {
