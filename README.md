@@ -3,7 +3,7 @@
 
 A tab view for egui
 
-[Crappy WIP Demo](https://damus-io.github.io/egui-tabs/)
+[Demo](https://damus-io.github.io/egui-tabs/)
 
 ## Usage
 
