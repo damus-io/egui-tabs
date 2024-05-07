@@ -1,5 +1,5 @@
 Cargo.lock
-/target
+target
 .build-result
 .buildcmd
 .direnv

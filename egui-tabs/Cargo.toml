@@ -1,0 +1,12 @@
+[package]
+name = "egui-tabs"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+#egui = { path = "/home/jb55/dev/github/emilk/egui/crates/egui" }
+#egui_extras = { path = "/home/jb55/dev/github/emilk/egui/crates/egui_extras" }
+egui = "*"
+egui_extras = "*"

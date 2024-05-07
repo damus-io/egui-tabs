@@ -32,6 +32,7 @@ mkShell ({
     #cargo-watch
     rustup
     rustfmt
+    trunk
     libiconv
     pkg-config
     #cmake
