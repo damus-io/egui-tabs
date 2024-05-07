@@ -9,7 +9,7 @@ fn main() -> Result<(), eframe::Error> {
         viewport: egui::ViewportBuilder::default().with_inner_size([600.0, 800.0]),
         ..Default::default()
     };
-    eframe::run_native("Tab Demo", options, Box::new(|cc| Box::<MyApp>::default()))
+    eframe::run_native("Tab Demo", options, Box::new(|_cc| Box::<MyApp>::default()))
 }
 
 // When compiling to web using trunk:

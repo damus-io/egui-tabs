@@ -1,4 +1,4 @@
-use egui::{vec2, Color32, Layout, Sense};
+use egui::{vec2, Layout, Sense};
 
 pub struct Tabs {
     cols: i32,
