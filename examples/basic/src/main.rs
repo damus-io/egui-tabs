@@ -18,14 +18,14 @@ fn main() {
     // Redirect `log` message to `console.log` and friends:
     eframe::WebLogger::init(log::LevelFilter::Debug).ok();
 
-    let mut web_options = eframe::WebOptions::default();
+    let web_options = eframe::WebOptions::default();
 
     wasm_bindgen_futures::spawn_local(async {
         eframe::WebRunner::new()
             .start(
                 "the_canvas_id", // hardcode it
                 web_options,
-                Box::new(|cc| Box::<MyApp>::default()),
+                Box::new(|_cc| Box::<MyApp>::default()),
             )
             .await
             .expect("failed to start eframe");
