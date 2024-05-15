@@ -8,11 +8,62 @@ pub struct Tabs {
     clip: bool,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
+pub struct TabState {
+    ind: i32,
+    hovered_tab: i32,
+    selected_tab: i32,
+}
+
+impl TabState {
+    pub fn is_hovered(&self) -> bool {
+        self.hovered_tab == self.ind
+    }
+
+    pub fn is_selected(&self) -> bool {
+        self.selected_tab == self.ind
+    }
+
+    pub fn hovered_tab(&self) -> Option<i32> {
+        if self.hovered_tab < 0 {
+            None
+        } else {
+            Some(self.hovered_tab)
+        }
+    }
+
+    pub fn selected_tab(&self) -> Option<i32> {
+        if self.selected_tab < 0 {
+            None
+        } else {
+            Some(self.selected_tab)
+        }
+    }
+
+    pub fn index(&self) -> i32 {
+        self.ind
+    }
+}
+
 #[derive(Default, Debug, Clone)]
 pub struct TabResponse {
-    pub hovered: Option<i32>,
-    pub selected: Option<i32>,
-    pub responses: Vec<egui::Response>,
+    hovered: Option<i32>,
+    selected: Option<i32>,
+    responses: Vec<egui::Response>,
+}
+
+impl TabResponse {
+    pub fn hovered(&self) -> Option<i32> {
+        self.hovered
+    }
+
+    pub fn selected(&self) -> Option<i32> {
+        self.selected
+    }
+
+    pub fn responses(self) -> Vec<egui::Response> {
+        self.responses
+    }
 }
 
 impl Tabs {
@@ -54,7 +105,7 @@ impl Tabs {
 
     pub fn show<F>(&mut self, ui: &mut egui::Ui, add_tab: F) -> TabResponse
     where
-        F: Fn(&mut egui::Ui, i32) -> egui::Response,
+        F: Fn(&mut egui::Ui, TabState) -> egui::Response,
     {
         if self.cols == 0 {
             return TabResponse::default();
@@ -76,28 +127,32 @@ impl Tabs {
         for ind in 0..self.cols {
             let resp = ui.allocate_rect(rect, self.sense);
 
-            if resp.clicked() {
+            let selected_tab = if resp.clicked() {
                 ui.ctx().data_mut(|d| d.insert_temp(tabs_id, ind));
-            }
+                ind
+            } else {
+                ui.ctx().data(|d| d.get_temp::<i32>(tabs_id)).unwrap_or(-1)
+            };
 
-            let is_selected = ui
-                .ctx()
-                .data_mut(|d| d.get_temp::<i32>(tabs_id).unwrap_or(-1))
-                == ind;
+            let hovered_tab = if resp.hovered() {
+                ui.ctx().data_mut(|d| d.insert_temp(hover_id, ind));
+                ind
+            } else {
+                ui.ctx().data(|d| d.get_temp::<i32>(hover_id)).unwrap_or(-1)
+            };
 
-            let is_hovered = (ui
-                .ctx()
-                .data_mut(|d| d.get_temp::<i32>(hover_id).unwrap_or(-1))
-                == ind)
-                || (!is_selected && resp.hovered());
+            let tab_state = TabState {
+                ind,
+                selected_tab,
+                hovered_tab,
+            };
 
-            if is_selected {
+            if tab_state.is_selected() {
                 ui.painter()
                     .rect_filled(rect, 0.0, ui.visuals().selection.bg_fill);
-            } else if is_hovered {
+            } else if tab_state.is_hovered() {
                 hovered = Some(ind);
                 ui.ctx().set_cursor_icon(CursorIcon::PointingHand);
-                ui.data_mut(|data| data.insert_temp(hover_id, ind));
                 ui.painter()
                     .rect_filled(rect, 0.0, ui.visuals().widgets.hovered.bg_fill);
             }
@@ -110,21 +165,23 @@ impl Tabs {
                 child_ui.set_clip_rect(clip_rect.intersect(child_ui.clip_rect()));
             }
 
-            if is_selected {
+            if tab_state.is_selected() {
                 let stroke_color = child_ui.style().visuals.selection.stroke.color;
                 child_ui.style_mut().visuals.override_text_color = Some(stroke_color);
                 selected = Some(ind)
             }
 
-            let resp = add_tab(&mut child_ui, ind);
+            let resp = add_tab(&mut child_ui, tab_state);
 
             if resp.hovered() {
                 ui.ctx().set_cursor_icon(CursorIcon::PointingHand);
                 ui.data_mut(|data| data.insert_temp(hover_id, ind));
+                hovered = Some(ind);
                 any_hover = true;
             }
 
             if resp.clicked() {
+                selected = Some(ind);
                 ui.ctx().data_mut(|d| d.insert_temp(tabs_id, ind));
             }
 
@@ -135,6 +192,7 @@ impl Tabs {
 
         if !any_hover {
             ui.data_mut(|data| data.remove::<i32>(hover_id));
+            hovered = None;
         }
 
         TabResponse {

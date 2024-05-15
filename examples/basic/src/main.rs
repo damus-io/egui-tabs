@@ -1,5 +1,5 @@
 use eframe::egui;
-use egui::{Frame, Layout, Direction};
+use egui::{Direction, Frame, Layout};
 use egui_tabs::Tabs;
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -40,17 +40,44 @@ impl eframe::App for MyApp {
         egui::CentralPanel::default()
             .frame(Frame::none())
             .show(ctx, |ui| {
-                Tabs::new(3).height(32.0).layout(Layout::centered_and_justified(Direction::TopDown)).show(ui, |ui, ind| {
-                    if ind == 0 {
-                        ui.label("Tab A")
-                    } else if ind == 1 {
-                        ui.label("Tab B")
-                    } else if ind == 2 {
-                        ui.label("Tab C")
-                    } else {
-                        ui.label("Unknown")
-                    }
-                });
+                Tabs::new(3)
+                    .height(32.0)
+                    .layout(Layout::centered_and_justified(Direction::TopDown))
+                    .show(ui, |ui, state| {
+                        let ind = state.index();
+                        let txt = if ind == 0 {
+                            "Tab A"
+                        } else if ind == 1 {
+                            "Tab B"
+                        } else if ind == 2 {
+                            "Tab C"
+                        } else {
+                            "Unknown"
+                        };
+
+                        let hovered = if state.is_hovered() { "h" } else { "" };
+                        let selected = if state.is_selected() { "s" } else { "" };
+
+                        let txt = if hovered != "" || selected != "" {
+                            format!("{} ({}{})", txt, hovered, selected)
+                        } else {
+                            txt.into()
+                        };
+
+                        let txt = if let Some(tab) = state.hovered_tab() {
+                            if tab == ind {
+                                txt
+                            } else if tab > ind {
+                                format!("{} ->", txt)
+                            } else {
+                                format!("<- {}", txt)
+                            }
+                        } else {
+                            txt
+                        };
+
+                        ui.label(txt)
+                    });
             });
     }
 }
