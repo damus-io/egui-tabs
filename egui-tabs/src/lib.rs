@@ -95,14 +95,14 @@ impl TabState {
     }
 }
 
-#[derive(Default, Debug, Clone)]
-pub struct TabResponse {
+#[derive(Default, Debug)]
+pub struct TabResponse<T> {
+    inner: Vec<egui::InnerResponse<T>>,
     hovered: Option<i32>,
     selected: Option<i32>,
-    responses: Vec<egui::Response>,
 }
 
-impl TabResponse {
+impl<T> TabResponse<T> {
     pub fn hovered(&self) -> Option<i32> {
         self.hovered
     }
@@ -111,8 +111,8 @@ impl TabResponse {
         self.selected
     }
 
-    pub fn responses(self) -> Vec<egui::Response> {
-        self.responses
+    pub fn inner(self) -> Vec<egui::InnerResponse<T>> {
+        self.inner
     }
 }
 
@@ -181,15 +181,20 @@ impl Tabs {
         self
     }
 
-    pub fn show<F>(&mut self, ui: &mut egui::Ui, add_tab: F) -> TabResponse
+    pub fn show<F, R>(&mut self, ui: &mut egui::Ui, add_tab: F) -> TabResponse<R>
     where
-        F: Fn(&mut egui::Ui, TabState) -> egui::Response,
+        F: Fn(&mut egui::Ui, TabState) -> R,
     {
+        let mut inner = Vec::with_capacity(self.cols as usize);
+
         if self.cols == 0 {
-            return TabResponse::default();
+            return TabResponse {
+                selected: None,
+                hovered: None,
+                inner,
+            };
         }
 
-        let mut responses = Vec::with_capacity(self.cols as usize);
         let mut rect = ui.available_rect_before_wrap();
         let cell_width = rect.width() / self.cols as f32;
         rect.set_width(cell_width);
@@ -206,6 +211,7 @@ impl Tabs {
             let resp = ui.allocate_rect(rect, self.sense);
 
             let selected_tab = if resp.clicked() {
+                selected = Some(ind);
                 ui.ctx().data_mut(|d| d.insert_temp(tabs_id, ind));
                 ind
             } else {
@@ -213,6 +219,8 @@ impl Tabs {
             };
 
             let hovered_tab = if resp.hovered() {
+                any_hover = true;
+                hovered = Some(ind);
                 ui.ctx().data_mut(|d| d.insert_temp(hover_id, ind));
                 ind
             } else {
@@ -257,21 +265,28 @@ impl Tabs {
                 }
             }
 
-            let resp = add_tab(&mut child_ui, tab_state);
+            let user_value = add_tab(&mut child_ui, tab_state);
+            /*
+            let child_rect = child_ui.min_rect();
+            let resp = child_ui.interact(child_rect, child_ui.id(), self.sense);
 
             if resp.hovered() {
+                ui.painter()
+                    .rect_filled(child_rect, 0.0, egui::Color32::RED);
                 ui.ctx().set_cursor_icon(CursorIcon::PointingHand);
-                ui.data_mut(|data| data.insert_temp(hover_id, ind));
                 hovered = Some(ind);
                 any_hover = true;
             }
 
             if resp.clicked() {
+                ui.painter()
+                    .rect_filled(child_rect, 0.0, egui::Color32::BLUE);
                 selected = Some(ind);
                 ui.ctx().data_mut(|d| d.insert_temp(tabs_id, ind));
             }
+            */
 
-            responses.push(resp);
+            inner.push(egui::InnerResponse::new(user_value, resp));
 
             rect = rect.translate(vec2(cell_width, 0.0))
         }
@@ -284,7 +299,7 @@ impl Tabs {
         TabResponse {
             selected,
             hovered,
-            responses,
+            inner,
         }
     }
 }

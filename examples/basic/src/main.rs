@@ -76,7 +76,8 @@ impl eframe::App for MyApp {
                             txt
                         };
 
-                        ui.label(txt)
+                        ui.add(egui::Label::new(txt).selectable(false));
+                        //ui.add(egui::Shape::Circle)
                     });
             });
     }
