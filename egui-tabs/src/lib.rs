@@ -191,7 +191,7 @@ impl Tabs {
 
         let mut responses = Vec::with_capacity(self.cols as usize);
         let mut rect = ui.available_rect_before_wrap();
-        let cell_width = rect.max.x / self.cols as f32;
+        let cell_width = rect.width() / self.cols as f32;
         rect.set_width(cell_width);
         rect.set_height(self.height);
 
