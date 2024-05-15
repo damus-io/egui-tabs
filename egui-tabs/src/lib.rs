@@ -1,4 +1,4 @@
-use egui::{vec2, CursorIcon, Layout, Sense};
+use egui::{vec2, Color32, CursorIcon, Layout, Sense};
 
 pub struct Tabs {
     cols: i32,
@@ -6,6 +6,46 @@ pub struct Tabs {
     sense: Sense,
     layout: Layout,
     clip: bool,
+    selected_bg: TabBackground,
+    hover_bg: TabBackground,
+}
+
+pub enum BackgroundType {
+    Hover,
+    Selected,
+}
+
+pub enum TabBackground {
+    Nothing,
+    VisualsDefault(BackgroundType),
+    Custom(Color32),
+}
+
+impl TabBackground {
+    pub fn custom(color: Color32) -> Self {
+        TabBackground::Custom(color)
+    }
+
+    pub fn visuals(bgtype: BackgroundType) -> Self {
+        TabBackground::VisualsDefault(bgtype)
+    }
+
+    pub fn none() -> Self {
+        TabBackground::Nothing
+    }
+
+    pub fn color(&self, visuals: &egui::Visuals) -> Option<Color32> {
+        match self {
+            TabBackground::Nothing => None,
+            TabBackground::VisualsDefault(BackgroundType::Hover) => {
+                Some(visuals.widgets.hovered.bg_fill)
+            }
+            TabBackground::VisualsDefault(BackgroundType::Selected) => {
+                Some(visuals.selection.bg_fill)
+            }
+            TabBackground::Custom(c) => Some(*c),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
@@ -71,15 +111,29 @@ impl Tabs {
         let height = 20.0;
         let sense = Sense::click();
         let layout = Layout::default();
-
         let clip = false;
+        let hover_bg = TabBackground::visuals(BackgroundType::Hover);
+        let selected_bg = TabBackground::visuals(BackgroundType::Selected);
+
         Tabs {
             cols,
             height,
             sense,
             layout,
             clip,
+            selected_bg,
+            hover_bg,
         }
+    }
+
+    pub fn hover_bg(mut self, bg_fill: TabBackground) -> Self {
+        self.hover_bg = bg_fill;
+        self
+    }
+
+    pub fn selected_bg(mut self, bg_fill: TabBackground) -> Self {
+        self.selected_bg = bg_fill;
+        self
     }
 
     pub fn sense(mut self, sense: Sense) -> Self {
@@ -148,13 +202,15 @@ impl Tabs {
             };
 
             if tab_state.is_selected() {
-                ui.painter()
-                    .rect_filled(rect, 0.0, ui.visuals().selection.bg_fill);
+                if let Some(c) = self.selected_bg.color(ui.visuals()) {
+                    ui.painter().rect_filled(rect, 0.0, c);
+                }
             } else if tab_state.is_hovered() {
                 hovered = Some(ind);
                 ui.ctx().set_cursor_icon(CursorIcon::PointingHand);
-                ui.painter()
-                    .rect_filled(rect, 0.0, ui.visuals().widgets.hovered.bg_fill);
+                if let Some(c) = self.hover_bg.color(ui.visuals()) {
+                    ui.painter().rect_filled(rect, 0.0, c);
+                }
             }
 
             let mut child_ui = ui.child_ui(rect, self.layout);

@@ -1,6 +1,7 @@
 use eframe::egui;
 use egui::{Direction, Frame, Layout};
-use egui_tabs::Tabs;
+use egui_tabs::{TabBackground, Tabs};
+use std::cmp::Ordering;
 
 #[cfg(not(target_arch = "wasm32"))]
 fn main() -> Result<(), eframe::Error> {
@@ -42,6 +43,7 @@ impl eframe::App for MyApp {
             .show(ctx, |ui| {
                 Tabs::new(3)
                     .height(32.0)
+                    //.hover_bg(TabBackground::none()) // no hover background!
                     .layout(Layout::centered_and_justified(Direction::TopDown))
                     .show(ui, |ui, state| {
                         let ind = state.index();
@@ -58,19 +60,17 @@ impl eframe::App for MyApp {
                         let hovered = if state.is_hovered() { "h" } else { "" };
                         let selected = if state.is_selected() { "s" } else { "" };
 
-                        let txt = if hovered != "" || selected != "" {
+                        let txt = if !hovered.is_empty() || !selected.is_empty() {
                             format!("{} ({}{})", txt, hovered, selected)
                         } else {
                             txt.into()
                         };
 
                         let txt = if let Some(tab) = state.hovered_tab() {
-                            if tab == ind {
-                                txt
-                            } else if tab > ind {
-                                format!("{} ->", txt)
-                            } else {
-                                format!("<- {}", txt)
+                            match tab.cmp(&ind) {
+                                Ordering::Equal => txt,
+                                Ordering::Greater => format!("{} ->", txt),
+                                Ordering::Less => format!("<- {}", txt),
                             }
                         } else {
                             txt
