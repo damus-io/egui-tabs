@@ -1,6 +1,6 @@
 use eframe::egui;
-use egui::{Direction, Frame, Layout};
-use egui_tabs::{TabBackground, Tabs};
+use egui::{Color32, Direction, Frame, Layout};
+use egui_tabs::{TabColor, Tabs};
 use std::cmp::Ordering;
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -43,7 +43,7 @@ impl eframe::App for MyApp {
             .show(ctx, |ui| {
                 Tabs::new(3)
                     .height(32.0)
-                    //.hover_bg(TabBackground::none()) // no hover background!
+                    //.hover_fg(TabColor::custom(Color32::RED)) // no hover background!
                     .layout(Layout::centered_and_justified(Direction::TopDown))
                     .show(ui, |ui, state| {
                         let ind = state.index();

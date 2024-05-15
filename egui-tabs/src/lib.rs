@@ -6,44 +6,54 @@ pub struct Tabs {
     sense: Sense,
     layout: Layout,
     clip: bool,
-    selected_bg: TabBackground,
-    hover_bg: TabBackground,
+    selected_bg: TabColor,
+    selected_fg: TabColor,
+    hover_bg: TabColor,
+    hover_fg: TabColor,
 }
 
-pub enum BackgroundType {
-    Hover,
-    Selected,
+pub enum VisualsVariant {
+    HoverBackground,
+    HoverForeground,
+    SelectedBackground,
+    SelectedForeground,
 }
 
-pub enum TabBackground {
+pub enum TabColor {
     Nothing,
-    VisualsDefault(BackgroundType),
+    VisualsDefault(VisualsVariant),
     Custom(Color32),
 }
 
-impl TabBackground {
+impl TabColor {
     pub fn custom(color: Color32) -> Self {
-        TabBackground::Custom(color)
+        TabColor::Custom(color)
     }
 
-    pub fn visuals(bgtype: BackgroundType) -> Self {
-        TabBackground::VisualsDefault(bgtype)
+    pub fn visuals(variant: VisualsVariant) -> Self {
+        TabColor::VisualsDefault(variant)
     }
 
     pub fn none() -> Self {
-        TabBackground::Nothing
+        TabColor::Nothing
     }
 
     pub fn color(&self, visuals: &egui::Visuals) -> Option<Color32> {
         match self {
-            TabBackground::Nothing => None,
-            TabBackground::VisualsDefault(BackgroundType::Hover) => {
+            TabColor::Nothing => None,
+            TabColor::VisualsDefault(VisualsVariant::HoverBackground) => {
                 Some(visuals.widgets.hovered.bg_fill)
             }
-            TabBackground::VisualsDefault(BackgroundType::Selected) => {
+            TabColor::VisualsDefault(VisualsVariant::HoverForeground) => {
+                Some(visuals.widgets.hovered.fg_stroke.color)
+            }
+            TabColor::VisualsDefault(VisualsVariant::SelectedBackground) => {
                 Some(visuals.selection.bg_fill)
             }
-            TabBackground::Custom(c) => Some(*c),
+            TabColor::VisualsDefault(VisualsVariant::SelectedForeground) => {
+                Some(visuals.selection.stroke.color)
+            }
+            TabColor::Custom(c) => Some(*c),
         }
     }
 }
@@ -112,8 +122,10 @@ impl Tabs {
         let sense = Sense::click();
         let layout = Layout::default();
         let clip = false;
-        let hover_bg = TabBackground::visuals(BackgroundType::Hover);
-        let selected_bg = TabBackground::visuals(BackgroundType::Selected);
+        let hover_bg = TabColor::visuals(VisualsVariant::HoverBackground);
+        let hover_fg = TabColor::visuals(VisualsVariant::HoverForeground);
+        let selected_bg = TabColor::visuals(VisualsVariant::SelectedBackground);
+        let selected_fg = TabColor::visuals(VisualsVariant::SelectedForeground);
 
         Tabs {
             cols,
@@ -122,16 +134,28 @@ impl Tabs {
             layout,
             clip,
             selected_bg,
+            selected_fg,
             hover_bg,
+            hover_fg,
         }
     }
 
-    pub fn hover_bg(mut self, bg_fill: TabBackground) -> Self {
+    pub fn hover_bg(mut self, bg_fill: TabColor) -> Self {
         self.hover_bg = bg_fill;
         self
     }
 
-    pub fn selected_bg(mut self, bg_fill: TabBackground) -> Self {
+    pub fn hover_fg(mut self, hover_fg: TabColor) -> Self {
+        self.hover_fg = hover_fg;
+        self
+    }
+
+    pub fn selected_fg(mut self, selected_fg: TabColor) -> Self {
+        self.selected_fg = selected_fg;
+        self
+    }
+
+    pub fn selected_bg(mut self, bg_fill: TabColor) -> Self {
         self.selected_bg = bg_fill;
         self
     }
@@ -202,6 +226,7 @@ impl Tabs {
             };
 
             if tab_state.is_selected() {
+                selected = Some(ind);
                 if let Some(c) = self.selected_bg.color(ui.visuals()) {
                     ui.painter().rect_filled(rect, 0.0, c);
                 }
@@ -221,10 +246,15 @@ impl Tabs {
                 child_ui.set_clip_rect(clip_rect.intersect(child_ui.clip_rect()));
             }
 
+            // set foreground colors if we have them
             if tab_state.is_selected() {
-                let stroke_color = child_ui.style().visuals.selection.stroke.color;
-                child_ui.style_mut().visuals.override_text_color = Some(stroke_color);
-                selected = Some(ind)
+                if let Some(c) = self.selected_fg.color(ui.visuals()) {
+                    child_ui.style_mut().visuals.override_text_color = Some(c);
+                }
+            } else if tab_state.is_hovered() {
+                if let Some(c) = self.hover_fg.color(ui.visuals()) {
+                    child_ui.style_mut().visuals.override_text_color = Some(c);
+                }
             }
 
             let resp = add_tab(&mut child_ui, tab_state);
