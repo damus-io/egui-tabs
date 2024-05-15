@@ -8,6 +8,13 @@ pub struct Tabs {
     clip: bool,
 }
 
+#[derive(Default, Debug, Clone)]
+pub struct TabResponse {
+    pub hovered: Option<i32>,
+    pub selected: Option<i32>,
+    pub responses: Vec<egui::Response>,
+}
+
 impl Tabs {
     pub fn new(cols: i32) -> Self {
         let height = 20.0;
@@ -45,14 +52,15 @@ impl Tabs {
         self
     }
 
-    pub fn show<F>(&mut self, ui: &mut egui::Ui, add_tab: F)
+    pub fn show<F>(&mut self, ui: &mut egui::Ui, add_tab: F) -> TabResponse
     where
         F: Fn(&mut egui::Ui, i32) -> egui::Response,
     {
         if self.cols == 0 {
-            return;
+            return TabResponse::default();
         }
 
+        let mut responses = Vec::with_capacity(self.cols as usize);
         let mut rect = ui.available_rect_before_wrap();
         let cell_width = rect.max.x / self.cols as f32;
         rect.set_width(cell_width);
@@ -61,6 +69,9 @@ impl Tabs {
         let tabs_id = ui.id().with("tabs");
         let hover_id = tabs_id.with("hover");
         let mut any_hover = false;
+
+        let mut selected: Option<i32> = None;
+        let mut hovered: Option<i32> = None;
 
         for ind in 0..self.cols {
             let resp = ui.allocate_rect(rect, self.sense);
@@ -84,6 +95,7 @@ impl Tabs {
                 ui.painter()
                     .rect_filled(rect, 0.0, ui.visuals().selection.bg_fill);
             } else if is_hovered {
+                hovered = Some(ind);
                 ui.ctx().set_cursor_icon(CursorIcon::PointingHand);
                 ui.data_mut(|data| data.insert_temp(hover_id, ind));
                 ui.painter()
@@ -101,6 +113,7 @@ impl Tabs {
             if is_selected {
                 let stroke_color = child_ui.style().visuals.selection.stroke.color;
                 child_ui.style_mut().visuals.override_text_color = Some(stroke_color);
+                selected = Some(ind)
             }
 
             let resp = add_tab(&mut child_ui, ind);
@@ -115,11 +128,19 @@ impl Tabs {
                 ui.ctx().data_mut(|d| d.insert_temp(tabs_id, ind));
             }
 
+            responses.push(resp);
+
             rect = rect.translate(vec2(cell_width, 0.0))
         }
 
         if !any_hover {
             ui.data_mut(|data| data.remove::<i32>(hover_id));
+        }
+
+        TabResponse {
+            selected,
+            hovered,
+            responses,
         }
     }
 }
