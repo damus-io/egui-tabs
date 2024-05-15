@@ -1,6 +1,6 @@
 use eframe::egui;
-use egui::{Color32, Direction, Frame, Layout};
-use egui_tabs::{TabColor, Tabs};
+use egui::{Direction, Frame, Layout};
+use egui_tabs::Tabs;
 use std::cmp::Ordering;
 
 #[cfg(not(target_arch = "wasm32"))]
