@@ -7,19 +7,22 @@ A tab view for egui
 
 ## Usage
 
-warning: API in in alpha and is currently unstable 
-
 [example](examples/basic/src/main.rs)
 
 ```rust
 Tabs::new(3).show(ui, |ui, state| {
     let ind = state.index();
-    if ind == 0 {
-        ui.label("Tab A");
+
+    let txt = if ind == 0 {
+        "Tab A"
     } else if ind == 1 {
-        ui.label("Tab B");
+        "Tab B"
     } else if ind == 2 {
-        ui.label("Tab C");
-    }
+        "Tab C"
+    } else {
+        ""
+    };
+
+    ui.add(egui::Label::new(txt).selectable(false));
 });
 ``` 
