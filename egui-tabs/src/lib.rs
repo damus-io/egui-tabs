@@ -10,6 +10,7 @@ pub struct Tabs {
     selected_fg: TabColor,
     hover_bg: TabColor,
     hover_fg: TabColor,
+    selected: Option<i32>,
 }
 
 pub enum VisualsVariant {
@@ -126,6 +127,7 @@ impl Tabs {
         let hover_fg = TabColor::visuals(VisualsVariant::HoverForeground);
         let selected_bg = TabColor::visuals(VisualsVariant::SelectedBackground);
         let selected_fg = TabColor::visuals(VisualsVariant::SelectedForeground);
+        let selected: Option<i32> = None;
 
         Tabs {
             cols,
@@ -137,6 +139,7 @@ impl Tabs {
             selected_fg,
             hover_bg,
             hover_fg,
+            selected,
         }
     }
 
@@ -157,6 +160,12 @@ impl Tabs {
 
     pub fn selected_bg(mut self, bg_fill: TabColor) -> Self {
         self.selected_bg = bg_fill;
+        self
+    }
+
+    /// The initial selection value
+    pub fn selected(mut self, selected: i32) -> Self {
+        self.selected = Some(selected);
         self
     }
 
@@ -204,7 +213,7 @@ impl Tabs {
         let hover_id = tabs_id.with("hover");
         let mut any_hover = false;
 
-        let mut selected: Option<i32> = None;
+        let mut selected: Option<i32> = self.selected;
         let mut hovered: Option<i32> = None;
 
         for ind in 0..self.cols {
@@ -215,7 +224,10 @@ impl Tabs {
                 ui.ctx().data_mut(|d| d.insert_temp(tabs_id, ind));
                 ind
             } else {
-                ui.ctx().data(|d| d.get_temp::<i32>(tabs_id)).unwrap_or(-1)
+                ui.ctx()
+                    .data(|d| d.get_temp::<i32>(tabs_id))
+                    .or(self.selected)
+                    .unwrap_or(-1)
             };
 
             let hovered_tab = if resp.hovered() {

@@ -43,6 +43,7 @@ impl eframe::App for MyApp {
             .show(ctx, |ui| {
                 Tabs::new(3)
                     .height(32.0)
+                    .selected(1)
                     //.hover_fg(TabColor::custom(Color32::RED)) // no hover background!
                     .layout(Layout::centered_and_justified(Direction::TopDown))
                     .show(ui, |ui, state| {
