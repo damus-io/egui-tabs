@@ -1,5 +1,5 @@
 [package]
-name = "egui-tabs"
+name = "egui_tabs"
 version = "0.1.0"
 edition = "2021"
 
