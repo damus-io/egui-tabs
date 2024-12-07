@@ -1,9 +1,12 @@
 [package]
 name = "egui_tabs"
-version = "0.2.0"
+version = "0.2.1"
+authors = ["William Casarin <jb55@jb55.com>"]
 edition = "2021"
 description = "A tabs control for egui"
 license = "MIT"
+readme = "../README.md"
+repository = "https://github.com/damus-io/egui-tabs"
 
 [dependencies]
 #egui = { path = "/home/jb55/dev/github/emilk/egui/crates/egui" }
