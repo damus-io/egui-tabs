@@ -10,6 +10,6 @@ version = "0.26.2"
 
 [workspace.dependencies]
 egui_tabs = { path = "egui-tabs" }
-egui = "0.29.1"
-egui_extras = "0.29.1"
-eframe = "0.29.1"
+egui = "0.30.0"
+egui_extras = "0.30.0"
+eframe = "0.30.0"

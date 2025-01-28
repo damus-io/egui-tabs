@@ -258,7 +258,8 @@ impl Tabs {
                 }
             }
 
-            let mut child_ui = ui.child_ui(rect, self.layout, None);
+            let mut child_ui =
+                ui.new_child(egui::UiBuilder::new().layout(self.layout).max_rect(rect));
             if self.clip {
                 let margin = egui::Vec2::splat(ui.visuals().clip_rect_margin);
                 let margin = margin.min(0.5 * ui.spacing().item_spacing);
