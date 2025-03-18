@@ -43,7 +43,7 @@ struct MyApp {}
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default()
-            .frame(Frame::none())
+            .frame(Frame::new())
             .show(ctx, |ui| {
                 Tabs::new(3)
                     .height(32.0)
