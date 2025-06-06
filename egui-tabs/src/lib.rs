@@ -190,9 +190,9 @@ impl Tabs {
         self
     }
 
-    pub fn show<F, R>(&mut self, ui: &mut egui::Ui, add_tab: F) -> TabResponse<R>
+    pub fn show<F, R>(&mut self, ui: &mut egui::Ui, mut add_tab: F) -> TabResponse<R>
     where
-        F: Fn(&mut egui::Ui, TabState) -> R,
+        F: FnMut(&mut egui::Ui, TabState) -> R,
     {
         let mut inner = Vec::with_capacity(self.cols as usize);
 
