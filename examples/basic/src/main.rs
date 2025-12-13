@@ -1,5 +1,5 @@
 use eframe::egui;
-use egui::{Direction, Frame, Layout};
+use egui::{Color32, Direction, Frame, Layout};
 use egui_tabs::Tabs;
 use std::cmp::Ordering;
 
@@ -43,7 +43,7 @@ struct MyApp {}
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default()
-            .frame(Frame::none())
+            .frame(Frame::NONE.fill(Color32::LIGHT_GRAY))
             .show(ctx, |ui| {
                 Tabs::new(3)
                     .height(32.0)
