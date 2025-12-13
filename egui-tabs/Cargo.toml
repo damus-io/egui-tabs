@@ -1,6 +1,6 @@
 [package]
 name = "egui_tabs"
-version = "0.2.1"
+version = "0.33.0"
 authors = ["William Casarin <jb55@jb55.com>"]
 edition = "2021"
 description = "A tabs control for egui"

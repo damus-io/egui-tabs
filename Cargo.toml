@@ -6,10 +6,10 @@ members = ["egui-tabs", "examples/*"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
 rust-version = "1.72"
-version = "0.26.2"
+version = "0.33.0"
 
 [workspace.dependencies]
 egui_tabs = { path = "egui-tabs" }
-egui = "0.30.0"
-egui_extras = "0.30.0"
-eframe = "0.30.0"
+egui = "0.33.0"
+egui_extras = "0.33.0"
+eframe = "0.33.0"
