@@ -10,6 +10,21 @@ version = "0.26.2"
 
 [workspace.dependencies]
 egui_tabs = { path = "egui-tabs" }
-egui = "0.31.1"
-egui_extras = "0.31.1"
-eframe = "0.31.1"
+egui = "0.36.2"
+egui_extras = "0.36.2"
+eframe = "0.36.2"
+
+# Build against notedeck's egui fork (damus-io/egui notedeck-egui-main-6b420bc1).
+# Consumers ignore this; notedeck applies its own [patch.crates-io].
+[patch.crates-io]
+egui = { git = "https://github.com/damus-io/egui", rev = "b5bf6c6f18b69a511399933446a4f537e8122d33" }
+epaint = { git = "https://github.com/damus-io/egui", rev = "b5bf6c6f18b69a511399933446a4f537e8122d33" }
+egui_extras = { git = "https://github.com/damus-io/egui", rev = "b5bf6c6f18b69a511399933446a4f537e8122d33" }
+eframe = { git = "https://github.com/damus-io/egui", rev = "b5bf6c6f18b69a511399933446a4f537e8122d33" }
+egui-winit = { git = "https://github.com/damus-io/egui", rev = "b5bf6c6f18b69a511399933446a4f537e8122d33" }
+egui-wgpu = { git = "https://github.com/damus-io/egui", rev = "b5bf6c6f18b69a511399933446a4f537e8122d33" }
+egui_glow = { git = "https://github.com/damus-io/egui", rev = "b5bf6c6f18b69a511399933446a4f537e8122d33" }
+emath = { git = "https://github.com/damus-io/egui", rev = "b5bf6c6f18b69a511399933446a4f537e8122d33" }
+ecolor = { git = "https://github.com/damus-io/egui", rev = "b5bf6c6f18b69a511399933446a4f537e8122d33" }
+epaint_default_fonts = { git = "https://github.com/damus-io/egui", rev = "b5bf6c6f18b69a511399933446a4f537e8122d33" }
+winit = { git = "https://github.com/damus-io/winit", rev = "dffef5714d89dad525cee778530468dfb0f84350" }
