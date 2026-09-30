@@ -209,7 +209,7 @@ impl Tabs {
         rect.set_width(cell_width);
         rect.set_height(self.height);
 
-        let tabs_id = ui.id().with("tabs");
+        let tabs_id = ui.scope_id().with("tabs");
         let hover_id = tabs_id.with("hover");
         let mut any_hover = false;
 
@@ -261,10 +261,9 @@ impl Tabs {
             let mut child_ui =
                 ui.new_child(egui::UiBuilder::new().layout(self.layout).max_rect(rect));
             if self.clip {
-                let margin = egui::Vec2::splat(ui.visuals().clip_rect_margin);
-                let margin = margin.min(0.5 * ui.spacing().item_spacing);
-                let clip_rect = rect.expand2(margin);
-                child_ui.set_clip_rect(clip_rect.intersect(child_ui.clip_rect()));
+                // Clip to the tab's own rect, as egui_extras' StripLayout
+                // does since `Visuals::clip_rect_margin` was retired.
+                child_ui.shrink_clip_rect(rect);
             }
 
             // set foreground colors if we have them
